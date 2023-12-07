@@ -1,35 +1,105 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {
+	Box,
+	Button,
+	Center,
+	Checkbox,
+	HStack,
+	Heading,
+	Input,
+	Tab,
+	TabList,
+	TabPanel,
+	TabPanels,
+	Tabs,
+	VStack,
+	Text,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [newTodo, setNewTodo] = useState("");
+	const [todos, setTodos] = useState([
+		{
+			id: "1",
+			name: "todo1",
+			done: false,
+		},
+		{
+			id: "3",
+			name: "todo2",
+			done: false,
+		},
+	]);
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	const addTodo = (value: string) => {
+		const newTodo = {
+			name: value,
+			done: false,
+			id: uuidv4(),
+		};
+		setTodos(todos => [...todos, newTodo]);
+		setNewTodo("");
+	};
+
+	const toggleTodo = (id: string, done: boolean) => {
+		console.log("click");
+		console.log(todos);
+		setTodos(todos =>
+			todos.map(t => {
+				if (t.id === id) {
+					t.done = done;
+				}
+				return t;
+			})
+		);
+	};
+
+	return (
+		<>
+			<Center>
+				<VStack>
+					<Heading>#todo</Heading>
+					<Box w="xl">
+						<Tabs isFitted>
+							<TabList>
+								<Tab>All</Tab>
+								<Tab>Active</Tab>
+								<Tab>Completed</Tab>
+							</TabList>
+							<TabPanels>
+								<TabPanel>
+									<HStack>
+										<Input
+											value={newTodo}
+											onChange={e => setNewTodo(e.target.value)}
+										/>
+
+										<Button onClick={() => addTodo(newTodo)}>Add</Button>
+									</HStack>
+									{todos.map((x, i) => (
+										<>
+											<HStack>
+												<Checkbox
+													onChange={() => toggleTodo(x.id, !x.done)}
+													key={i}
+													isChecked={x.done}
+												>
+													<Text as={x.done ? "del" : "abbr"}>{x.name}</Text>
+												</Checkbox>
+											</HStack>
+										</>
+									))}
+								</TabPanel>
+								<TabPanel>2</TabPanel>
+								<TabPanel>3</TabPanel>
+							</TabPanels>
+						</Tabs>
+					</Box>
+				</VStack>
+			</Center>
+		</>
+	);
 }
 
-export default App
+export default App;
