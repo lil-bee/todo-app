@@ -1,3 +1,4 @@
+import { DeleteIcon } from "@chakra-ui/icons";
 import {
 	Box,
 	Button,
@@ -33,6 +34,9 @@ function App() {
 	]);
 
 	const addTodo = (value: string) => {
+		if (!value.trim()) {
+			return;
+		}
 		const newTodo = {
 			name: value,
 			done: false,
@@ -43,16 +47,25 @@ function App() {
 	};
 
 	const toggleTodo = (id: string, done: boolean) => {
-		console.log("click");
-		console.log(todos);
 		setTodos(todos =>
 			todos.map(t => {
 				if (t.id === id) {
-					t.done = done;
+					return { ...t, done: done };
 				}
 				return t;
 			})
 		);
+	};
+
+	const deleteTodo = (id: string) => {
+		const updatedTodos = todos.filter(x => x.id !== id);
+		setTodos(updatedTodos);
+	};
+
+	const deleteAll = () => {
+		const remainTodos = todos.filter(x => !x.done);
+		setTodos(remainTodos);
+		console.log(todos);
 	};
 
 	return (
@@ -81,18 +94,56 @@ function App() {
 										<>
 											<HStack>
 												<Checkbox
-													onChange={() => toggleTodo(x.id, !x.done)}
+													onChange={() => toggleTodo(x?.id, !x.done)}
 													key={i}
-													isChecked={x.done}
+													isChecked={x?.done}
 												>
-													<Text as={x.done ? "del" : "abbr"}>{x.name}</Text>
+													<Text as={x?.done ? "del" : "abbr"}>{x?.name}</Text>
 												</Checkbox>
 											</HStack>
 										</>
 									))}
 								</TabPanel>
-								<TabPanel>2</TabPanel>
-								<TabPanel>3</TabPanel>
+								<TabPanel>
+									{todos
+										.filter(x => x?.done === false)
+										.map((x, i) => (
+											<>
+												<HStack>
+													<Checkbox
+														onChange={() => toggleTodo(x?.id, !x?.done)}
+														key={i}
+														isChecked={x?.done}
+													>
+														<Text as={x?.done ? "del" : "abbr"}>{x?.name}</Text>
+													</Checkbox>
+												</HStack>
+											</>
+										))}
+								</TabPanel>
+								<TabPanel>
+									{todos
+										.filter(x => x?.done === true)
+										.map((x, i) => (
+											<>
+												<HStack>
+													<Checkbox
+														onChange={() => toggleTodo(x?.id, !x?.done)}
+														key={x?.id}
+														isChecked={x?.done}
+													>
+														<Text as={x?.done ? "del" : "abbr"}>{x?.name}</Text>
+													</Checkbox>
+													<Button onClick={() => deleteTodo(x?.id)}>
+														<DeleteIcon />
+													</Button>
+												</HStack>
+											</>
+										))}
+									<Button onClick={deleteAll} colorScheme="red">
+										Delete All
+									</Button>
+								</TabPanel>
 							</TabPanels>
 						</Tabs>
 					</Box>
