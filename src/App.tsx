@@ -15,23 +15,51 @@ import {
 	VStack,
 	Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+
+interface Todo {
+	id: string;
+	name: string;
+	done: boolean;
+}
 
 function App() {
 	const [newTodo, setNewTodo] = useState("");
-	const [todos, setTodos] = useState([
-		{
-			id: "1",
-			name: "todo1",
-			done: false,
-		},
-		{
-			id: "3",
-			name: "todo2",
-			done: false,
-		},
-	]);
+	const [tabIndex, setTabIndex] = useState(() => {
+		const storedTabIndex = localStorage.getItem("tabIndex");
+		return storedTabIndex ? Number(storedTabIndex) : 0;
+	});
+	const [todos, setTodos] = useState<Todo[]>([]);
+
+	const handleTabsChange = (index: number) => {
+		setTabIndex(index);
+	};
+
+	useEffect(() => {
+		const storedTodos = localStorage.getItem("todos");
+
+		if (storedTodos) {
+			try {
+				const parsedTodos: Todo[] = JSON.parse(storedTodos);
+				setTodos(parsedTodos);
+			} catch (error) {
+				console.error("Gagal mengurai data JSON dari localStorage:", error);
+			}
+		}
+	}, []);
+
+	useEffect(() => {
+		if (todos.length !== 0) {
+			localStorage.setItem("todos", JSON.stringify(todos));
+		}
+	}, [todos]);
+
+	useEffect(() => {
+		if (tabIndex !== undefined) {
+			localStorage.setItem("tabIndex", String(tabIndex));
+		}
+	}, [tabIndex]);
 
 	const addTodo = (value: string) => {
 		if (!value.trim()) {
@@ -74,7 +102,7 @@ function App() {
 				<VStack>
 					<Heading>#todo</Heading>
 					<Box w="xl">
-						<Tabs isFitted>
+						<Tabs index={tabIndex} onChange={handleTabsChange} isLazy isFitted>
 							<TabList>
 								<Tab>All</Tab>
 								<Tab>Active</Tab>
@@ -84,6 +112,7 @@ function App() {
 								<TabPanel>
 									<HStack>
 										<Input
+											placeholder="add details"
 											value={newTodo}
 											onChange={e => setNewTodo(e.target.value)}
 										/>
@@ -94,6 +123,7 @@ function App() {
 										<>
 											<HStack>
 												<Checkbox
+													size="lg"
 													onChange={() => toggleTodo(x?.id, !x.done)}
 													key={i}
 													isChecked={x?.done}
@@ -152,5 +182,4 @@ function App() {
 		</>
 	);
 }
-
 export default App;
