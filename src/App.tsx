@@ -14,6 +14,7 @@ import {
 	Tabs,
 	VStack,
 	Text,
+	IconButton,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -50,7 +51,9 @@ function App() {
 	}, []);
 
 	useEffect(() => {
-		if (todos.length !== 0) {
+		if (todos.length === 0) {
+			localStorage.removeItem("todos");
+		} else {
 			localStorage.setItem("todos", JSON.stringify(todos));
 		}
 	}, [todos]);
@@ -98,10 +101,10 @@ function App() {
 
 	return (
 		<>
-			<Center>
+			<Center mt="50px">
 				<VStack>
 					<Heading>#todo</Heading>
-					<Box w="xl">
+					<Box w={{ base: "sm", sm: "xl" }}>
 						<Tabs index={tabIndex} onChange={handleTabsChange} isLazy isFitted>
 							<TabList>
 								<Tab>All</Tab>
@@ -117,12 +120,18 @@ function App() {
 											onChange={e => setNewTodo(e.target.value)}
 										/>
 
-										<Button onClick={() => addTodo(newTodo)}>Add</Button>
+										<Button
+											variant="primary-button"
+											onClick={() => addTodo(newTodo)}
+										>
+											Add
+										</Button>
 									</HStack>
 									{todos.map((x, i) => (
 										<>
 											<HStack>
 												<Checkbox
+													py="3px"
 													size="lg"
 													onChange={() => toggleTodo(x?.id, !x.done)}
 													key={i}
@@ -135,6 +144,20 @@ function App() {
 									))}
 								</TabPanel>
 								<TabPanel>
+									<HStack mb="20px">
+										<Input
+											placeholder="add details"
+											value={newTodo}
+											onChange={e => setNewTodo(e.target.value)}
+										/>
+
+										<Button
+											variant="primary-button"
+											onClick={() => addTodo(newTodo)}
+										>
+											Add
+										</Button>
+									</HStack>
 									{todos
 										.filter(x => x?.done === false)
 										.map((x, i) => (
@@ -156,7 +179,7 @@ function App() {
 										.filter(x => x?.done === true)
 										.map((x, i) => (
 											<>
-												<HStack>
+												<HStack justify="space-between">
 													<Checkbox
 														onChange={() => toggleTodo(x?.id, !x?.done)}
 														key={x?.id}
@@ -164,15 +187,26 @@ function App() {
 													>
 														<Text as={x?.done ? "del" : "abbr"}>{x?.name}</Text>
 													</Checkbox>
-													<Button onClick={() => deleteTodo(x?.id)}>
-														<DeleteIcon />
-													</Button>
+													<IconButton
+														variant="delete-button"
+														aria-label="Delete Todo"
+														onClick={() => deleteTodo(x?.id)}
+														icon={<DeleteIcon />}
+													/>
 												</HStack>
 											</>
 										))}
-									<Button onClick={deleteAll} colorScheme="red">
-										Delete All
-									</Button>
+									{todos.filter(x => x?.done === true).length !== 0 ? (
+										<Button
+											leftIcon={<DeleteIcon />}
+											onClick={deleteAll}
+											variant="danger-button"
+										>
+											Delete All
+										</Button>
+									) : (
+										""
+									)}
 								</TabPanel>
 							</TabPanels>
 						</Tabs>
