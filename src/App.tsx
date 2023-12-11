@@ -15,6 +15,7 @@ import {
 	VStack,
 	Text,
 	IconButton,
+	Flex,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -197,15 +198,19 @@ function App() {
 											</>
 										))}
 									{todos.filter(x => x?.done === true).length !== 0 ? (
-										<Button
-											leftIcon={<DeleteIcon />}
-											onClick={deleteAll}
-											variant="danger-button"
-										>
-											Delete All
-										</Button>
+										<Flex justify="end" align="center">
+											<Button
+												leftIcon={<DeleteIcon />}
+												onClick={deleteAll}
+												variant="danger-button"
+												size="sm"
+												mt="10px"
+											>
+												Delete All
+											</Button>
+										</Flex>
 									) : (
-										""
+										<Text>No Tasks Completed</Text>
 									)}
 								</TabPanel>
 							</TabPanels>
