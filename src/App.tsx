@@ -130,7 +130,7 @@ function App() {
 									</HStack>
 									{todos.map((x, i) => (
 										<>
-											<HStack>
+											<HStack mb="20px">
 												<Checkbox
 													py="3px"
 													size="lg"
@@ -178,7 +178,7 @@ function App() {
 								<TabPanel>
 									{todos
 										.filter(x => x?.done === true)
-										.map((x, i) => (
+										.map(x => (
 											<>
 												<HStack justify="space-between">
 													<Checkbox
