@@ -114,7 +114,7 @@ function App() {
 							</TabList>
 							<TabPanels>
 								<TabPanel>
-									<HStack>
+									<HStack mb="10px">
 										<Input
 											placeholder="add details"
 											value={newTodo}
@@ -130,7 +130,7 @@ function App() {
 									</HStack>
 									{todos.map((x, i) => (
 										<>
-											<HStack mb="20px">
+											<HStack>
 												<Checkbox
 													py="3px"
 													size="lg"
@@ -145,7 +145,7 @@ function App() {
 									))}
 								</TabPanel>
 								<TabPanel>
-									<HStack mb="20px">
+									<HStack mb="10px">
 										<Input
 											placeholder="add details"
 											value={newTodo}
@@ -165,6 +165,7 @@ function App() {
 											<>
 												<HStack>
 													<Checkbox
+														py="3px"
 														onChange={() => toggleTodo(x?.id, !x?.done)}
 														key={i}
 														isChecked={x?.done}
